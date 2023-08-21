@@ -1,0 +1,27 @@
+name: Build and Deploy
+# Cuando se haga un push, sin importar el branch
+on: [push]
+permissions:
+  contents: write
+jobs:
+    # Task - tareas
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    # correra en la ultima version de ubuntu disponible en este caso en github
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Checkout 🛎️
+        # checkout es una herramienta que va en su version 3
+        # la cual validara nuestro branch y vera que todo esta bien
+        # hara checkout para correr este paso
+        uses: actions/checkout@v3
+
+      - name: Install and Build 🔧 
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # The folder the action should deploy.
